@@ -1,0 +1,102 @@
+name: Build and Release Book
+
+on:
+  push:
+    tags:
+      - 'v*'  # Trigger on version tags like v1.0, v1.1, etc.
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Install Pandoc
+        run: |
+          wget https://github.com/jgm/pandoc/releases/download/3.1.11/pandoc-3.1.11-1-amd64.deb
+          sudo dpkg -i pandoc-3.1.11-1-amd64.deb
+      
+      - name: Install Calibre (for MOBI conversion)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y calibre
+      
+      - name: Install LaTeX (for PDF)
+        run: |
+          sudo apt-get install -y texlive-xetex texlive-fonts-recommended texlive-lang-cyrillic fonts-dejavu
+      
+      - name: Build EPUB
+        run: make epub
+      
+      - name: Build MOBI
+        run: make mobi || echo "MOBI build failed, continuing..."
+      
+      - name: Build PDF
+        run: make pdf || echo "PDF build failed, continuing..."
+      
+      - name: List built files
+        run: ls -lh build/
+      
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Книга "Хвойные" ${{ github.ref_name }}
+          body: |
+            # ХВОЙНЫЕ: История, жизнь и тайны вечнозелёного мира
+            
+            Научно-популярная книга о прошлом, настоящем и будущем древнейших растений Земли.
+            
+            ## Форматы:
+            - **EPUB** - для электронных книг и приложений для чтения
+            - **MOBI** - для устройств Amazon Kindle
+            - **PDF** - для чтения на компьютере или печати
+            
+            ## О книге:
+            Книга рассказывает о хвойных растениях — одной из самых древних и удивительных форм жизни на планете. 
+            Вы узнаете об их истории, биологии, экологическом значении и роли в жизни человека.
+            
+            Приятного чтения!
+          draft: false
+          prerelease: false
+      
+      - name: Upload EPUB to Release
+        if: always()
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/conifers-book.epub
+          asset_name: conifers-book.epub
+          asset_content_type: application/epub+zip
+      
+      - name: Upload MOBI to Release
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/conifers-book.mobi
+          asset_name: conifers-book.mobi
+          asset_content_type: application/x-mobipocket-ebook
+      
+      - name: Upload PDF to Release
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/conifers-book.pdf
+          asset_name: conifers-book.pdf
+          asset_content_type: application/pdf
