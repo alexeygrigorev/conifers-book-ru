@@ -7,7 +7,7 @@ BOOK_TITLE="ХВОЙНЫЕ: История, жизнь и тайны вечно�
 OUTPUT_DIR="build"
 METADATA="metadata.yaml"
 
-# Chapter files in order
+# Chapter files in order - UPDATED for individual chapters
 CHAPTERS=(
     "chapters/00-introduction.md"
     "chapters/01-birth-of-conifers.md"
@@ -15,10 +15,19 @@ CHAPTERS=(
     "chapters/03-conifers-and-humans.md"
     "chapters/04-pinaceae.md"
     "chapters/05-cupressaceae.md"
-    "chapters/06-09-rare-families.md"
-    "chapters/10-12-internal-life.md"
-    "chapters/13-17-world-and-future.md"
-    "chapters/18-conclusion-appendices.md"
+    "chapters/06-araucariaceae.md"
+    "chapters/07-taxaceae.md"
+    "chapters/08-podocarpaceae.md"
+    "chapters/09-rare-conifers.md"
+    "chapters/10-tree-life.md"
+    "chapters/11-chemistry.md"
+    "chapters/12-minerals.md"
+    "chapters/13-plants.md"
+    "chapters/14-animals.md"
+    "chapters/15-climate.md"
+    "chapters/16-future-forests.md"
+    "chapters/17-lessons.md"
+    "chapters/18-conclusion.md"
 )
 
 # Create output directory if it doesn't exist
