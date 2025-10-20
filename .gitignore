@@ -1,0 +1,25 @@
+# Build artifacts
+build/*.epub
+build/*.mobi
+build/*.pdf
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Pandoc temporary files
+*.aux
+*.log
+*.out
+*.toc
